@@ -14,14 +14,14 @@ class Board:
             cols = num_of_cols[i]
             for j in range(cols):
                 if j == 3 and i == 3:
-                    row.append(Hex.generate_desert_hex())
+                    row.append(Hex.generate_desert_hex(i, j))
                 elif i == 0 or i == 6 or j == 0 or j == cols - 1:
                     if Board.is_harbor_coordinate(i, j):
-                        row.append(Hex.generate_random_harbor_hex())
+                        row.append(Hex.generate_random_harbor_hex(i, j))
                     else:
-                        row.append(Hex.generate_water_hex())
+                        row.append(Hex.generate_water_hex(i, j))
                 else:
-                    row.append(Hex.generate_random_resource_hex())
+                    row.append(Hex.generate_random_resource_hex(i, j))
             board.append(row)
         return board
 
@@ -46,3 +46,9 @@ class Board:
             spaces = " " * left_margin
             string += spaces + row + "\n"
         return string
+
+    def draw(self, screen):
+        for row in range(len(self.board)):
+            for col in range(len(self.board[row])):
+                hex = self.board[row][col]
+                hex.draw(screen)

@@ -3,6 +3,7 @@ import sys
 import time
 
 import globals
+from board import Board
 
 # main function contains game loop
 def main():
@@ -12,6 +13,8 @@ def main():
     screen.fill(globals.BACKGROUND_COLOR)
     clock = p.time.Clock()
 
+    b = Board()
+
     # game loop
     running = True
     while running:
@@ -19,7 +22,7 @@ def main():
             if e.type == p.QUIT:
                 running = False
 
-        p.display.update()
+        b.draw(screen)
         p.display.flip()
         clock.tick(globals.MAX_FPS)
 
