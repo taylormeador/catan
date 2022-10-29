@@ -64,8 +64,14 @@ class Hex:
         p.draw.polygon(surface, color, point_list, 0)
         p.draw.polygon(surface, globals.BLACK, point_list, 3)
 
+    def draw_buildings(self, screen):
+        
+        return
+
     def draw(self, screen):
         self.draw_hexagon(screen, self.color, HEX_RADIUS, self.x, self.y)
+        self.draw_buildings(screen)
+        return
 
     def __str__(self):
         if self.type in ResourceHex.resource_types:
@@ -246,7 +252,6 @@ class HarborHex(Hex):
         text_surface = font.render(self.trade_resource, True, globals.BLACK)
         screen.blit(text_surface, self.get_resource_text_coordinates())
         
-
 
 class WaterHex(Hex):
     color = WATER_COLOR
