@@ -16,6 +16,7 @@ DESERT_COLOR = p.Color('darkgoldenrod3')
 CHIT_COLOR = p.Color('beige')
 
 
+# Hex base class - actual hexes will be instantiated as subclasses of this class
 class Hex:
     hexes = []
     types = ['desert', 'water', 'harbor', 'wood', 'brick', 'sheep', 'wheat', 'ore']
@@ -65,7 +66,6 @@ class Hex:
         p.draw.polygon(surface, globals.BLACK, point_list, 3)
 
     def draw_buildings(self, screen):
-        
         return
 
     def draw(self, screen):
@@ -74,12 +74,10 @@ class Hex:
         return
 
     def __str__(self):
-        if self.type in ResourceHex.resource_types:
-            return self.type + " - " + str(self.number)
-        return self.type
+        return self.type + ' Hex (' + self.row + self.col + ')\n'
 
     def __repr__(self):
-        return self.__str__()
+        return '<Hex ' + self.type + '>'
 
 
 class ResourceHex(Hex):
@@ -89,21 +87,21 @@ class ResourceHex(Hex):
     resource_colors = {'wood': WOOD_COLOR, 'brick': BRICK_COLOR, 'sheep': SHEEP_COLOR, 'wheat': WHEAT_COLOR, 'ore': ORE_COLOR}
 
     def __init__(self, row, col):
-        self.type = ResourceHex.get_random_type()
-        super().__init__(self.type, row, col)
+        self.resource = ResourceHex.get_random_resource_type()
+        super().__init__(self.resource, row, col)
         self.number = ResourceHex.chit_numbers[len(ResourceHex.resource_hexes)]
         self.color = ResourceHex.resource_colors[self.type]
         self.resource_hexes.append(self)
 
-    def get_random_type():
+    def get_random_resource_type():
         random_number = random.randint(0, len(ResourceHex.resource_types) - 1)
         type = ResourceHex.resource_types[random_number]
         existing_hexes_of_type = Hex.instantiated[type]
 
         if (type == 'wood' or type == 'wheat' or type == 'sheep') and existing_hexes_of_type == 4:
-            return ResourceHex.get_random_type()
+            return ResourceHex.get_random_resource_type()
         elif (type == 'ore' or type == 'brick') and existing_hexes_of_type == 3:
-            return ResourceHex.get_random_type()
+            return ResourceHex.get_random_resource_type()
         return type
 
     def draw(self, screen):
@@ -139,6 +137,12 @@ class ResourceHex(Hex):
                 p.draw.circle(screen, globals.BLACK, (self.x + 3 + direction * 5 * offset, self.y + chit_radius / 2), 2)
             else:
                 p.draw.circle(screen, globals.BLACK, (self.x + direction * 5 * offset, self.y + chit_radius / 2), 2)
+
+    def __str__(self):
+        return self.resource + ' ' + str(self.number) + ' Resource Hex'
+
+    def __repr__(self):
+        return '<Resource Hex ' + self.type + ' ' + self.number + '>'
 
 
 class DesertHex(Hex):
@@ -252,8 +256,20 @@ class HarborHex(Hex):
         text_surface = font.render(self.trade_resource, True, globals.BLACK)
         screen.blit(text_surface, self.get_resource_text_coordinates())
         
+    def __str__(self):
+        return self.trade_resource + ' Harbor Hex'
+
+    def __repr__(self):
+        return '<Harbor Hex ' + self.trade_resource + '>'
+
 
 class WaterHex(Hex):
     color = WATER_COLOR
     def __init__(self, row, col):
         super().__init__('water', row, col)
+
+    def __str__(self):
+        return 'Water Hex'
+
+    def __repr__(self):
+        return '<Water Hex>'

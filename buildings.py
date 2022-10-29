@@ -3,9 +3,26 @@ import math
 import pygame as p
 
 
-class Road:
+# this class will handle the insertion/deletion of building objects to hex 
+class Builder:
     def __init__(self):
         pass
+
+    def build(building, hex, position):
+        if isinstance(building, Road):
+            hex.edges[position] = building
+
+        elif isinstance(building, Settlement) or isinstance(building, City):
+            hex.vertices[position] = building
+
+
+class Building:
+    def __init__(self, owner):
+        self.owner = owner
+
+class Road(Building):
+    def __init__(self, owner):
+        super().__init__(owner)
 
     def draw(self, screen):
         rotations = [150, 90, 30, 150, 90, 30]
@@ -36,12 +53,30 @@ class Road:
         p.draw.polygon(screen, self.owner.color, points)
         return
 
+    def __str__(self):
+        return str(self.owner) + '\'s Road'
 
-class Settlement:
-    def __init__(self):
-        pass
+    def __repr__(self):
+        return '<' + str(self.owner) + '\'s Road>'
 
 
-class City:
-    def __init__(self):
-        pass
+class Settlement(Building):
+    def __init__(self, owner):
+        super().__init__(owner)
+
+    def __str__(self):
+        return str(self.owner) + '\'s Settlement'
+
+    def __repr__(self):
+        return '<' + str(self.owner) + '\'s Settlement>'
+
+
+class City(Building):
+    def __init__(self, owner):
+        super().__init__(owner)
+
+    def __str__(self):
+        return str(self.owner) + '\'s City'
+
+    def __repr__(self):
+        return '<' + str(self.owner) + '\'s City>'

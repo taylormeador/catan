@@ -4,7 +4,8 @@ import time
 p.init()
 
 import globals
-from board import Board
+from game_state import GameState
+from buildings import Builder, Road, Settlement, City
 
 # main function contains game loop
 def main():
@@ -13,7 +14,25 @@ def main():
     screen.fill(globals.BACKGROUND_COLOR)
     clock = p.time.Clock()
 
-    b = Board()
+    gs = GameState(['Taylor', 'Manasi', 'JB'])
+    print(gs.turn)
+    for player in gs.players:
+        print(player.resources)
+    print(gs.e.roll_dice())
+    hex = gs.b.get_hex(4, 3)
+    player = gs.players[0]
+    road = Road(player)
+    Builder.build(road, hex, 0)
+    print(hex.edges)
+
+    settlement = Settlement(player)
+    city = City(player)
+    Builder.build(settlement, hex, 2)
+    Builder.build(city, hex, 4)
+
+    print(hex.vertices)
+
+
 
     # game loop
     running = True
@@ -22,7 +41,7 @@ def main():
             if e.type == p.QUIT:
                 running = False
 
-        b.draw(screen)
+        gs.b.draw(screen)
         p.display.flip()
         clock.tick(globals.MAX_FPS)
 

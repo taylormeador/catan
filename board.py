@@ -5,6 +5,9 @@ class Board:
         # board is a 2d array of Hex objects
         self.board = self.generate_random_board()
 
+    def get_hex(self, row, col):
+        return self.board[row][col]
+
     def generate_random_board(self):
         # board is 7 rows, the amount of columns differ for each row
         board = []
