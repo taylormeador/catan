@@ -66,11 +66,16 @@ class Hex:
         p.draw.polygon(surface, globals.BLACK, point_list, 3)
 
     def draw_buildings(self, screen):
+        for i in range(6):
+            if self.edges[i]:
+                self.edges[i].draw(screen, self.x, self.y)
+        for i in range(6):
+            if self.vertices[i]:
+                self.vertices[i].draw(screen, self.x, self.y)
         return
 
     def draw(self, screen):
         self.draw_hexagon(screen, self.color, HEX_RADIUS, self.x, self.y)
-        self.draw_buildings(screen)
         return
 
     def __str__(self):

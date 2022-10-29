@@ -41,6 +41,17 @@ class Board:
             return True
         return False 
 
+    def draw(self, screen):
+        # draw hexes, then roads, then cities/settlements
+        for row in range(len(self.board)):
+            for col in range(len(self.board[row])):
+                hex = self.board[row][col]
+                hex.draw(screen)
+        for row in range(len(self.board)):
+            for col in range(len(self.board[row])):
+                hex = self.board[row][col]
+                hex.draw_buildings(screen)
+
     def __str__(self):
         string = "\n"
         for i in range(len(self.board)):
@@ -50,8 +61,3 @@ class Board:
             string += spaces + row + "\n"
         return string
 
-    def draw(self, screen):
-        for row in range(len(self.board)):
-            for col in range(len(self.board[row])):
-                hex = self.board[row][col]
-                hex.draw(screen)

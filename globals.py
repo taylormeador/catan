@@ -2,5 +2,6 @@ import pygame as p
 WIDTH, HEIGHT = 1400, 800
 MAX_FPS = 60
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 BACKGROUND_COLOR = BLACK
 VP_WIN_AMOUNT = 10
