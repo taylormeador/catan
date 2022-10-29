@@ -29,6 +29,9 @@ class Hex:
         self.x, self.y = self.get_coordinates(row, col)
         Hex.hexes.append(self)
         Hex.instantiated[type] += 1
+        self.edges = [None, None, None, None, None, None] # edges are Road objects, clockwise from edge starting at 1 o clock
+        self.vertices = [None, None, None, None, None, None] # vertices are Settlement or City objects, clockwise from edge starting at 1 o clock
+        self.neighbors = [None, None, None, None, None, None] # neighbors are Hex objects, clockwise from edge at 1 o clock
 
     def get_coordinates(self, row, col):
         x_offset = globals.WIDTH / 6
@@ -60,7 +63,6 @@ class Hex:
         ]
         p.draw.polygon(surface, color, point_list, 0)
         p.draw.polygon(surface, globals.BLACK, point_list, 3)
-
 
     def draw(self, screen):
         self.draw_hexagon(screen, self.color, HEX_RADIUS, self.x, self.y)
@@ -132,6 +134,7 @@ class ResourceHex(Hex):
             else:
                 p.draw.circle(screen, globals.BLACK, (self.x + direction * 5 * offset, self.y + chit_radius / 2), 2)
 
+
 class DesertHex(Hex):
     color = DESERT_COLOR
 
@@ -148,6 +151,7 @@ class HarborHex(Hex):
     def __init__(self, row, col):
         super().__init__('harbor', row, col)
         self.trade_resource = HarborHex.get_random_trade_resource()
+        self.trade_edge_int = self.get_trade_edge_int()
         HarborHex.harbors_instantiated[self.trade_resource] += 1
         HarborHex.harbors_remaining[self.trade_resource] -= 1
 
@@ -157,6 +161,91 @@ class HarborHex(Hex):
         if HarborHex.harbors_remaining[resource] == 0:
             return HarborHex.get_random_trade_resource()
         return resource
+
+    def get_trade_edge_int(self):
+        if self.row == 0:
+            if self.col == 0:
+                return 2
+            if self.col == 2:
+                return 3
+
+        if self.row == 1:
+            return 3
+
+        if self.row == 2 or self.row == 4:
+            return 1
+
+        if self.row == 3:
+            return 4
+
+        if self.row == 5:
+            return 5
+
+        if self.row == 6:
+            if self.col == 0:
+                return 0
+            if self.col == 2:
+                return 5
+
+    def get_port_coordinates(self):
+        x_direction = 1 if self.trade_edge_int < 3 else -1
+        y_direction = -1 if self.trade_edge_int == 0 or self.trade_edge_int == 5 else 1
+
+        x = self.x + x_direction * HEX_RADIUS / 6
+        y = self.y + y_direction * HEX_RADIUS / 3
+
+        if self.trade_edge_int == 1 or self.trade_edge_int == 4:
+            x += x_direction * HEX_RADIUS / 6
+            y = self.y
+
+        return x, y
+
+    def get_resource_text_coordinates(self):
+        y_direction = 1 if self.trade_edge_int not in [2, 3] else -1
+
+        x = self.x - HEX_RADIUS / 3 - (len(self.trade_resource) - 3) ** 3
+        y = self.y + y_direction * HEX_RADIUS / 3
+
+        return x, y
+
+    def draw_port(self, screen):
+        rotations = [150, 90, 30, 150, 90, 30]
+        x, y = self.get_port_coordinates()
+        width = HEX_RADIUS * .8
+        height = HEX_RADIUS / 4
+        rotation = rotations[self.trade_edge_int]
+        points = []
+
+        # The distance from the center of the rectangle to one of the corners is the same for each corner
+        radius = math.sqrt((height / 2)**2 + (width / 2)**2)
+
+        # Get the angle to one of the corners with respect to the x axis
+        angle = math.atan2(height / 2, width / 2)
+
+        # Transform that angle to reach each corner of the rectangle
+        angles = [angle, -angle + math.pi, angle + math.pi, -angle]
+
+        # Convert rotation from degrees to radians
+        rot_radians = (math.pi / 180) * rotation
+
+        # Calculate the coordinates of each point
+        for angle in angles:
+            y_offset = -1 * radius * math.sin(angle + rot_radians)
+            x_offset = radius * math.cos(angle + rot_radians)
+            points.append((x + x_offset, y + y_offset))
+
+        p.draw.polygon(screen, DESERT_COLOR, points)
+        return
+
+    def draw(self, screen):
+        super().draw(screen)
+        self.draw_port(screen)
+        # draw port text (resource)
+        p.font.init()
+        font = p.font.Font(p.font.get_default_font(), 18)
+        text_surface = font.render(self.trade_resource, True, globals.BLACK)
+        screen.blit(text_surface, self.get_resource_text_coordinates())
+        
 
 
 class WaterHex(Hex):
