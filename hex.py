@@ -4,7 +4,7 @@ import math
 
 import globals
 
-HEX_RADIUS = 40
+HEX_RADIUS = 50
 HEX_WIDTH = HEX_RADIUS * 2
 WOOD_COLOR = p.Color('darkorange4')
 BRICK_COLOR = p.Color('firebrick')
@@ -13,6 +13,8 @@ WHEAT_COLOR = p.Color('gold')
 ORE_COLOR = p.Color('azure4')
 WATER_COLOR = p.Color('aqua')
 DESERT_COLOR = p.Color('darkgoldenrod3')
+CHIT_COLOR = p.Color('beige')
+
 
 class Hex:
     hexes = []
@@ -34,7 +36,7 @@ class Hex:
         x = col * HEX_WIDTH * .88 + ((6 - row) * HEX_RADIUS * .88) + x_offset
         if row > 2:
             x = col * HEX_WIDTH * .88 + (row * HEX_RADIUS * .88) + x_offset
-        y = row * HEX_RADIUS * 1.5 + HEX_WIDTH + y_offset
+        y = row * HEX_RADIUS * 1.55 + HEX_WIDTH + y_offset
         return x, y
 
     def generate_random_resource_hex(i, j):
@@ -49,13 +51,16 @@ class Hex:
     def generate_desert_hex(i, j):
         return DesertHex(i, j)
 
-    def draw_hexagon(self, surface, color, r, x, y, width=0):
+    def draw_hexagon(self, surface, color, r, x, y):
         n = 6
+        offset = 32.988
         point_list = [
-            (x + r * math.cos(2 * math.pi * i / n + 33), y + r * math.sin(2 * math.pi * i / n + 33))
+            (x + r * math.cos(2 * math.pi * i / n + offset), y + r * math.sin(2 * math.pi * i / n + offset))
             for i in range(n)
         ]
-        p.draw.polygon(surface, color, point_list, width)
+        p.draw.polygon(surface, color, point_list, 0)
+        p.draw.polygon(surface, globals.BLACK, point_list, 3)
+
 
     def draw(self, screen):
         self.draw_hexagon(screen, self.color, HEX_RADIUS, self.x, self.y)
@@ -93,6 +98,39 @@ class ResourceHex(Hex):
             return ResourceHex.get_random_type()
         return type
 
+    def draw(self, screen):
+        super().draw(screen)
+        self.draw_chit(screen)
+
+    def draw_chit(self, screen):
+        # draw circle
+        chit_radius = 20
+        p.draw.circle(screen, CHIT_COLOR, (self.x, self.y), chit_radius)
+        p.draw.circle(screen, globals.BLACK, (self.x, self.y), chit_radius, width=2)
+        
+        # draw number in chit
+        p.font.init()
+        font = p.font.Font(p.font.get_default_font(), 18)
+        text_surface = font.render(str(self.number), True, globals.BLACK)
+        font_x = self.x - (chit_radius / 2)
+        font_y = self.y - (chit_radius / 2)
+        if len(str(self.number)) == 1:
+            font_x = self.x - (chit_radius / 4)
+        screen.blit(text_surface, (font_x, font_y))
+
+        # draw dots below number
+        num_dots_hash = {2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 8: 5, 9: 4, 10: 3, 11: 2, 12: 1}
+        num_dots = num_dots_hash[self.number]
+        for i in range(num_dots):
+            direction = (-1) ** i
+            offset = (i + 1) // 2
+            if i == 0:
+                direction = 0
+            # even amounts split center, odd amounts start at center
+            if num_dots % 2 == 0: 
+                p.draw.circle(screen, globals.BLACK, (self.x + 3 + direction * 5 * offset, self.y + chit_radius / 2), 2)
+            else:
+                p.draw.circle(screen, globals.BLACK, (self.x + direction * 5 * offset, self.y + chit_radius / 2), 2)
 
 class DesertHex(Hex):
     color = DESERT_COLOR

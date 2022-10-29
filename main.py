@@ -1,13 +1,13 @@
 import pygame as p
 import sys
 import time
+p.init()
 
 import globals
 from board import Board
 
 # main function contains game loop
 def main():
-    p.init()
     p.display.set_caption('Conquerors of Catalan')
     screen = p.display.set_mode((globals.WIDTH, globals.HEIGHT))
     screen.fill(globals.BACKGROUND_COLOR)
