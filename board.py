@@ -52,6 +52,53 @@ class Board:
                 hex = self.board[row][col]
                 hex.draw_buildings(screen)
 
+    def set_neighbors(self):
+        # loop through all hexes add neighboring hexes to hex.neighbors 
+        # TODO this only works 100% correctly for resource tiles. 
+        # There are edge cases pertaining to water/harbor hexes that I might fix later
+        for row in range(len(self.board)):
+            even = row % 2 == 0
+            row_len = len(self.board[row])
+            row_above, row_below = None, None
+            above_shorter, below_shorter = False, False
+            if row:
+                row_above = self.board[row - 1]
+                above_shorter = len(row_above) < row_len
+            if row < len(self.board) - 1:
+                row_below = self.board[row + 1]
+                below_shorter = len(row_below) < row_len
+
+            for col in range(row_len):
+                hex = self.board[row][col]
+
+                # target columns can be left or right or above
+                target_col_0 = col + 0 if above_shorter else col + 1
+                target_col_2 = col + 0 if below_shorter else col + 1
+                target_col_3 = col + -1 if below_shorter else col + 0
+                target_col_5 = col + -1 if above_shorter else col + 0
+
+                # left and right neighbors
+                if col < row_len - 1:
+                    hex.neighbors[1] = self.board[row][col + 1]
+                if col:
+                    hex.neighbors[4] = self.board[row][col - 1]
+
+                # neighbors 0 and 5 
+                if row_above:
+                    if col < len(row_above) - 1:
+                        hex.neighbors[0] = self.board[row - 1][target_col_0]
+                    if col: 
+                        hex.neighbors[5] = self.board[row - 1][target_col_5]
+
+                # neighbors 2 and 3
+                if row_below:
+                    if col < len(row_below) - 1:
+                        hex.neighbors[2] = self.board[row + 1][target_col_2]
+                    if col:
+                        hex.neighbors[3] = self.board[row + 1][target_col_3]
+                
+                
+
     def __str__(self):
         string = "\n"
         for i in range(len(self.board)):

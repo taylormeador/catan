@@ -1,9 +1,9 @@
 import globals
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, color):
         self.name = name
-        self.color = globals.RED
+        self.color = color
         self.resources = {'wood': 0, 'brick': 0, 'sheep': 0, 'wheat': 0, 'ore': 0}
         self.dev_cards = {'knight': 0, 'road building': 0, 'year of plenty': 0, 'monopoly': 0, 'vp': 0}
         self.settlements = []

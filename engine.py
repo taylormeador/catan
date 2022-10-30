@@ -10,17 +10,20 @@ class Engine:
     def roll_dice(self):
         first = random.randint(1, 6)
         second = random.randint(1, 6)
-        print('Rolled:', first + second)
+        print('> Rolled:', first + second)
         self.distribute_resources(first + second)
 
     def distribute_resources(self, rolled):
         for hex in ResourceHex.resource_hexes:
             if hex.number == rolled:
+                print(hex, hex.vertices)
                 for vertex in hex.vertices:
                     if vertex:
                         if isinstance(vertex, City):
+                            print('> ' + vertex.owner.name + ' gets 2 ' + hex.resource)
                             vertex.owner.resources[hex.resource] += 2
                         elif isinstance(vertex, Settlement):
+                            print('> ' + vertex.owner.name + ' gets 1 ' + hex.resource)
                             vertex.owner.resources[hex.resource] += 1
 
     def find_longest_road(self):

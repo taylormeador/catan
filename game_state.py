@@ -7,10 +7,11 @@ import random
 class GameState:
     def __init__(self, players):
         self.b = Board()
-        self.players = [Player(name) for name in players]  # in order of turn taking
+        self.players = [player for player in players]  # in order of turn taking
         self.turns = 0
         self.turn = self.get_current_player_turn()
-        self.e = Engine(self)
+        self.en = Engine(self)
+        self.b.set_neighbors()
 
     def get_current_player_turn(self):
         return self.players[self.turns % len(self.players)]

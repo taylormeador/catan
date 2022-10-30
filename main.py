@@ -1,11 +1,10 @@
 import pygame as p
-import sys
-import time
 p.init()
 
 import globals
 from game_state import GameState
 from buildings import Builder, Road, Settlement, City
+from player import Player
 
 # main function contains game loop
 def main():
@@ -13,64 +12,28 @@ def main():
     screen = p.display.set_mode((globals.WIDTH, globals.HEIGHT))
     screen.fill(globals.BACKGROUND_COLOR)
     clock = p.time.Clock()
-
-    gs = GameState(['Taylor', 'Manasi', 'JB'])
+    
+    gs = GameState([Player('Taylor', p.Color('blue')), Player('Manasi', p.Color('orange')), Player('JB', p.Color('red'))])
+    en = gs.en
 
     hex = gs.b.get_hex(3, 3)
     hex1 = gs.b.get_hex(3, 2)
     hex2 = gs.b.get_hex(3, 4)
     hex3 = gs.b.get_hex(4, 3)
     hex4 = gs.b.get_hex(4, 2)
-    player = gs.players[1]
-    road = Road(player, 0)
-    road1 = Road(player, 1)
-    road2 = Road(player, 2)
-    road3 = Road(player, 3)
-    road4 = Road(player, 4)
-    road5 = Road(player, 5)
-    settlement = Settlement(player, 2)
-    city = City(player, 4)
+    hex5 = gs.b.get_hex(0, 0)
 
-    Builder.build(road, hex)
-    Builder.build(road1, hex)
-    Builder.build(road2, hex)
-    Builder.build(road3, hex)
-    Builder.build(road4, hex)
-    Builder.build(road5, hex)
-    Builder.build(road, hex1)
-    Builder.build(road1, hex1)
-    Builder.build(road2, hex1)
-    Builder.build(road3, hex1)
-    Builder.build(road4, hex1)
-    Builder.build(road5, hex1)
-    Builder.build(road, hex2)
-    Builder.build(road1, hex2)
-    Builder.build(road2, hex2)
-    Builder.build(road3, hex2)
-    Builder.build(road4, hex2)
-    Builder.build(road5, hex2)
-    Builder.build(road, hex3)
-    Builder.build(road1, hex3)
-    Builder.build(road2, hex3)
-    Builder.build(road3, hex3)
-    Builder.build(road4, hex3)
-    Builder.build(road5, hex3)
-    Builder.build(road, hex4)
-    Builder.build(road1, hex4)
-    Builder.build(road2, hex4)
-    Builder.build(road3, hex4)
-    Builder.build(road4, hex4)
-    Builder.build(road5, hex4)
-    Builder.build(settlement, hex1)
-    Builder.build(settlement, hex2)
-    Builder.build(city, hex1)
-    Builder.build(city, hex4)
-    Builder.build(city, hex)
-
-    print(hex.edges)
-    print(hex.vertices)
-
-
+    print(hex, hex.neighbors)
+    print()
+    print(hex1, hex1.neighbors)
+    print()
+    print(hex2, hex2.neighbors)
+    print()
+    print(hex3, hex3.neighbors)
+    print()
+    print(hex4, hex4.neighbors)
+    print()
+    print(hex5, hex5.neighbors)
 
     # game loop
     running = True
@@ -78,6 +41,12 @@ def main():
         for e in p.event.get():
             if e.type == p.QUIT:
                 running = False
+            
+            if e.type == p.MOUSEBUTTONDOWN:
+                en.roll_dice()
+                for player in gs.players:
+                    print(player.resources)
+
 
         gs.b.draw(screen)
         p.display.flip()

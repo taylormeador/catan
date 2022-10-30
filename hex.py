@@ -79,7 +79,7 @@ class Hex:
         return
 
     def __str__(self):
-        return self.type + ' Hex (' + self.row + self.col + ')\n'
+        return self.type + ' Hex (' + str(self.row) + ', ' + str(self.col) + ')'
 
     def __repr__(self):
         return '<Hex ' + self.type + '>'
@@ -147,7 +147,7 @@ class ResourceHex(Hex):
         return self.resource + ' ' + str(self.number) + ' Resource Hex'
 
     def __repr__(self):
-        return '<Resource Hex ' + self.type + ' ' + self.number + '>'
+        return '<Resource Hex ' + self.type + ' ' + str(self.number) + '>'
 
 
 class DesertHex(Hex):
