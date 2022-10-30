@@ -23,17 +23,12 @@ def main():
     hex4 = gs.b.get_hex(4, 2)
     hex5 = gs.b.get_hex(0, 0)
 
-    print(hex, hex.neighbors)
-    print()
-    print(hex1, hex1.neighbors)
-    print()
-    print(hex2, hex2.neighbors)
-    print()
-    print(hex3, hex3.neighbors)
-    print()
-    print(hex4, hex4.neighbors)
-    print()
-    print(hex5, hex5.neighbors)
+    print(hex, hex.vertices, hex.edges)
+    print(hex1, hex1.vertices, hex1.edges)
+    print(hex2, hex2.vertices, hex2.edges)
+    print(hex3, hex3.vertices, hex3.edges)
+    print(hex4, hex4.vertices, hex4.edges)
+    print(hex5, hex5.vertices, hex5.edges)
 
     # game loop
     running = True

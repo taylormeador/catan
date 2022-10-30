@@ -14,16 +14,17 @@ class Engine:
         self.distribute_resources(first + second)
 
     def distribute_resources(self, rolled):
+        # loop through all resource hexes and give resources to building owners
         for hex in ResourceHex.resource_hexes:
             if hex.number == rolled:
-                print(hex, hex.vertices)
+                print('> found hex with rolled number:', hex, hex.vertices)
                 for vertex in hex.vertices:
-                    if vertex:
-                        if isinstance(vertex, City):
-                            print('> ' + vertex.owner.name + ' gets 2 ' + hex.resource)
+                    if vertex.occupied:
+                        if isinstance(vertex.building, City):
+                            print('> ' + vertex.building.owner.name + ' gets 2 ' + hex.resource)
                             vertex.owner.resources[hex.resource] += 2
-                        elif isinstance(vertex, Settlement):
-                            print('> ' + vertex.owner.name + ' gets 1 ' + hex.resource)
+                        elif isinstance(vertex.building, Settlement):
+                            print('> ' + vertex.building.owner.name + ' gets 1 ' + hex.resource)
                             vertex.owner.resources[hex.resource] += 1
 
     def find_longest_road(self):

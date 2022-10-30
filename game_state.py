@@ -11,7 +11,6 @@ class GameState:
         self.turns = 0
         self.turn = self.get_current_player_turn()
         self.en = Engine(self)
-        self.b.set_neighbors()
 
     def get_current_player_turn(self):
         return self.players[self.turns % len(self.players)]

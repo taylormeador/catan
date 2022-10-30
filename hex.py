@@ -30,8 +30,8 @@ class Hex:
         self.x, self.y = self.get_coordinates(row, col)
         Hex.hexes.append(self)
         Hex.instantiated[type] += 1
-        self.edges = [None, None, None, None, None, None] # edges are Road objects, clockwise from edge starting at 1 o clock
-        self.vertices = [None, None, None, None, None, None] # vertices are Settlement or City objects, clockwise from edge starting at 1 o clock
+        self.edges = [None, None, None, None, None, None] # edges are Edge objects, clockwise from edge starting at 1 o clock
+        self.vertices = [None, None, None, None, None, None] # vertices are Vertex objects, clockwise from edge starting at 1 o clock
         self.neighbors = [None, None, None, None, None, None] # neighbors are Hex objects, clockwise from edge at 1 o clock
 
     def get_coordinates(self, row, col):
@@ -65,14 +65,14 @@ class Hex:
         p.draw.polygon(surface, color, point_list, 0)
         p.draw.polygon(surface, globals.BLACK, point_list, 3)
 
-    def draw_buildings(self, screen):
-        for i in range(6):
-            if self.edges[i]:
-                self.edges[i].draw(screen, self.x, self.y)
-        for i in range(6):
-            if self.vertices[i]:
-                self.vertices[i].draw(screen, self.x, self.y)
-        return
+    # def draw_buildings(self, screen):
+    #     for i in range(6):
+    #         if self.edges[i]:
+    #             self.edges[i].draw(screen, self.x, self.y)
+    #     for i in range(6):
+    #         if self.vertices[i]:
+    #             self.vertices[i].draw(screen, self.x, self.y)
+    #     return
 
     def draw(self, screen):
         self.draw_hexagon(screen, self.color, HEX_RADIUS, self.x, self.y)
@@ -278,3 +278,68 @@ class WaterHex(Hex):
 
     def __repr__(self):
         return '<Water Hex>'
+
+
+class Edge:
+    edges = []
+    structured_edges = []
+
+    def __init__(self, row, col, position):
+        self.road = None
+        self.occupied = False
+        self.row = row
+        self.col = col
+        self.position = position
+        Edge.edges.append(self)
+
+    def init_all_edges():
+        # goal is to be able to write edge = Edge.structured_edges[board_row][board_col][edge_int]
+        structured = []
+        num_of_cols = [4, 5, 6, 7, 6, 5, 4]
+        for i in range(7):
+            row = []
+            for j in range(num_of_cols[i]):
+                col = []
+                for position in range(6):
+                    col.append(Edge(i, j, position))
+                row.append(col)
+            structured.append(row)
+        Edge.structured_edges = structured
+
+    def __str__(self):
+        return 'Edge (' + str(self.row) + ', ' + str(self.col) + ', ' + str(self.position) + ')'
+
+    def __repr__(self):
+        return '<Edge (' + str(self.row) + ', ' + str(self.col) + ', ' + str(self.position) + ')>'
+
+
+class Vertex:
+    vertices = []
+    structured_vertices = []
+
+    def __init__(self, row, col):
+        self.building = None
+        self.occupied = False
+        self.row = row
+        self.col = col
+        Vertex.vertices.append(self)
+
+    def init_all_vertices():
+        # there are 11 rows of vertices, number of columns depends on row index
+        structured = []
+        for i in range(11):
+            row = []
+            num_cols = 3 + (i + 1) // 2 if i < 6 else 9 - (i + 1) // 2
+            for j in range(num_cols):
+                row.append(Vertex(i, j))
+            structured.append(row)
+        Vertex.structured_vertices = structured
+
+    def draw(self):
+        pass
+
+    def __str__(self):
+        return 'Vertex (' + str(self.row) + ', ' + str(self.col) + ')'
+
+    def __repr__(self):
+        return '<Vertex (' + str(self.row) + ', ' + str(self.col) + ')>'

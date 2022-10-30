@@ -1,9 +1,12 @@
-from hex import Hex
+from hex import Hex, Vertex, Edge
 
 class Board:
     def __init__(self):
         # board is a 2d array of Hex objects
         self.board = self.generate_random_board()
+        self.set_neighbors()
+        self.set_vertices()
+        self.set_edges()
 
     def get_hex(self, row, col):
         return self.board[row][col]
@@ -50,9 +53,10 @@ class Board:
         for row in range(len(self.board)):
             for col in range(len(self.board[row])):
                 hex = self.board[row][col]
-                hex.draw_buildings(screen)
+                # hex.draw_buildings(screen)
 
     def set_neighbors(self):
+        # called when board is initialized
         # loop through all hexes add neighboring hexes to hex.neighbors 
         # TODO this only works 100% correctly for resource tiles. 
         # There are edge cases pertaining to water/harbor hexes that I might fix later
@@ -97,8 +101,38 @@ class Board:
                     if col:
                         hex.neighbors[3] = self.board[row + 1][target_col_3]
                 
-                
+    def set_vertices(self):
+        # This is called when the board is initialized
+        # It will create all the vertices and add them to the relevant Hexes
+        Vertex.init_all_vertices()
+        for vertex in Vertex.vertices:
+            lower = vertex.row > 5
+            if vertex.row % 2 == 0: 
+                # vertices on even rows have hexes to the upper left, upper right, and below
+                up_left = (vertex.row // 2, vertex.col)
+                up_right = (vertex.row // 2, vertex.col + 1)
+                down = (vertex.row // 2 + 1, vertex.col) if lower else (vertex.row // 2 + 1, vertex.col + 1)
 
+                # each vertex belongs to 3 different hexes
+                self.board[up_left[0]][up_left[1]].vertices[2] = vertex
+                self.board[up_right[0]][up_right[1]].vertices[4] = vertex
+                self.board[down[0]][down[1]].vertices[0] = vertex
+            else:  
+                # odd row vertices have hexes above, below to the left and right
+                up = (vertex.row // 2, vertex.col + 1) if lower else (vertex.row // 2, vertex.col)
+                down_left = (vertex.row // 2 + 1, vertex.col)
+                down_right = (vertex.row // 2 + 1, vertex.col + 1)
+
+                # each vertex belongs to 3 different hexes
+                self.board[up[0]][up[1]].vertices[3] = vertex
+                self.board[down_left[0]][down_left[1]].vertices[1] = vertex
+                self.board[down_right[0]][down_right[1]].vertices[5] = vertex
+
+    def set_edges(self):
+        Edge.init_all_edges()
+        for hex in Hex.hexes:
+            hex.edges = Edge.structured_edges[hex.row][hex.col]
+    
     def __str__(self):
         string = "\n"
         for i in range(len(self.board)):
