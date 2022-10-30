@@ -1,27 +1,23 @@
-from hex import HEX_RADIUS
+from hex import HEX_RADIUS, Edge, Vertex
 import math
 import pygame as p
 import globals
 
 
 
-# this class will handle the insertion/deletion of building objects to hex 
+# this class will handle the insertion/deletion of building objects to hexes
 class Builder:
-    def build(building, hex):
-        if isinstance(building, Road):
-            hex.edges[building.edge_int] = building
-
-        elif isinstance(building, Settlement) or isinstance(building, City):
-            hex.vertices[building.edge_int] = building
+    def build(building, location):
+        location.building = building
+        location.occupied = True
 
 
 # base class for roads, settlements, and cities
 class Building:
     buildings = []
 
-    def __init__(self, owner, edge_int):
+    def __init__(self, owner):
         self.owner = owner
-        self.edge_int = edge_int
         Building.buildings.append(self)
 
     def make_triangle(self, scale, internal_angle, rotation, x_offset, y_offset):
@@ -52,17 +48,18 @@ class Building:
 
 
 class Road(Building):
-    def __init__(self, owner, edge_int):
-        super().__init__(owner, edge_int)
+    def __init__(self, owner, position):
+        super().__init__(owner)
+        self.position = position
 
     def get_coordinates(self, parent_x, parent_y):
-        x_direction = 1 if self.edge_int < 3 else -1
-        y_direction = -1 if self.edge_int == 0 or self.edge_int == 5 else 1
+        x_direction = 1 if self.position < 3 else -1
+        y_direction = -1 if self.position == 0 or self.position == 5 else 1
 
         x = parent_x + x_direction * HEX_RADIUS / 2.2
         y = parent_y + y_direction * HEX_RADIUS / 1.3
 
-        if self.edge_int == 1 or self.edge_int == 4:
+        if self.position == 1 or self.position == 4:
             x += x_direction * HEX_RADIUS / 2.3
             y = parent_y
 
@@ -73,7 +70,7 @@ class Road(Building):
         x, y = self.get_coordinates(parent_x, parent_y)
         width = HEX_RADIUS * .7
         height = HEX_RADIUS * .2
-        rotation = rotations[self.edge_int]
+        rotation = rotations[self.position]
         points = []
 
         # The distance from the center of the rectangle to one of the corners is the same for each corner
@@ -106,8 +103,8 @@ class Road(Building):
 
 
 class Settlement(Building):
-    def __init__(self, owner, edge_int):
-        super().__init__(owner, edge_int)
+    def __init__(self, owner):
+        super().__init__(owner)
 
     def draw(self, screen, parent_x, parent_y):
         rect = p.Rect(parent_x - HEX_RADIUS / 4.4, parent_y - HEX_RADIUS * 1.1, HEX_RADIUS * .5, HEX_RADIUS * .5)
@@ -116,7 +113,6 @@ class Settlement(Building):
         p.draw.polygon(screen, globals.BLACK, triangle_points, width=3)
         p.draw.rect(screen, self.owner.color, rect)
         p.draw.rect(screen, globals.BLACK, rect, width=3)
-        return
 
     def __str__(self):
         return str(self.owner) + '\'s Settlement'
@@ -126,8 +122,8 @@ class Settlement(Building):
 
 
 class City(Building):
-    def __init__(self, owner, edge_int):
-        super().__init__(owner, edge_int)
+    def __init__(self, owner):
+        super().__init__(owner)
 
     def draw(self, screen, parent_x, parent_y):
         rect = p.Rect(parent_x - HEX_RADIUS / 2.2, parent_y - HEX_RADIUS * 1.1, HEX_RADIUS * .9, HEX_RADIUS * .5)

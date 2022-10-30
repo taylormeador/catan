@@ -293,7 +293,7 @@ class Edge:
         Edge.edges.append(self)
 
     def init_all_edges():
-        # goal is to be able to write edge = Edge.structured_edges[board_row][board_col][edge_int]
+        # goal is to be able to write edge = Edge.structured_edges[board_row][board_col][position]
         structured = []
         num_of_cols = [4, 5, 6, 7, 6, 5, 4]
         for i in range(7):
