@@ -46,14 +46,12 @@ class Board:
 
     def draw(self, screen):
         # draw hexes, then roads, then cities/settlements
-        for row in range(len(self.board)):
-            for col in range(len(self.board[row])):
-                hex = self.board[row][col]
-                hex.draw(screen)
-        for row in range(len(self.board)):
-            for col in range(len(self.board[row])):
-                hex = self.board[row][col]
-                # hex.draw_buildings(screen)
+        for hex in Hex.hexes:
+            hex.draw(screen)
+        # for edge in Edge.edges:
+        #     edge.draw(screen)
+        # for vertex in Vertex.vertices:
+        #     vertex.draw(screen)
 
     def set_neighbors(self):
         # called when board is initialized
@@ -133,6 +131,18 @@ class Board:
         for hex in Hex.hexes:
             hex.edges = Edge.structured_edges[hex.row][hex.col]
     
+    def get_clicked(self, pos):
+        for v in Vertex.vertices:
+            if v.clicked(pos):
+                return v
+        for e in Edge.edges:
+            if e.clicked(pos):
+                return e
+        for h in Hex.hexes:
+            if h.clicked(pos):
+                return h
+        return None
+
     def __str__(self):
         string = "\n"
         for i in range(len(self.board)):

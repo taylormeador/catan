@@ -4,20 +4,14 @@ import pygame as p
 import globals
 
 
-
-# this class will handle the insertion/deletion of building objects to hexes
-class Builder:
-    def build(building, location):
-        location.building = building
-        location.occupied = True
-
-
 # base class for roads, settlements, and cities
 class Building:
     buildings = []
 
-    def __init__(self, owner):
+    def __init__(self, owner, location):
         self.owner = owner
+        self.location = location
+        self.build()
         Building.buildings.append(self)
 
     def make_triangle(self, scale, internal_angle, rotation, x_offset, y_offset):
@@ -46,24 +40,28 @@ class Building:
                         
         return (sp1, sp2, sp3)
 
+    def build(self):
+        self.location.building = self
+        self.location.occupied = True
+
 
 class Road(Building):
-    def __init__(self, owner, position):
-        super().__init__(owner)
-        self.position = position
+    def __init__(self, owner, edge):
+        super().__init__(owner, edge)
 
     def get_coordinates(self, parent_x, parent_y):
-        x_direction = 1 if self.position < 3 else -1
-        y_direction = -1 if self.position == 0 or self.position == 5 else 1
+        pass
+        # x_direction = 1 if self.position < 3 else -1
+        # y_direction = -1 if self.position == 0 or self.position == 5 else 1
 
-        x = parent_x + x_direction * HEX_RADIUS / 2.2
-        y = parent_y + y_direction * HEX_RADIUS / 1.3
+        # x = parent_x + x_direction * HEX_RADIUS / 2.2
+        # y = parent_y + y_direction * HEX_RADIUS / 1.3
 
-        if self.position == 1 or self.position == 4:
-            x += x_direction * HEX_RADIUS / 2.3
-            y = parent_y
+        # if self.position == 1 or self.position == 4:
+        #     x += x_direction * HEX_RADIUS / 2.3
+        #     y = parent_y
 
-        return x, y
+        # return x, y
 
     def draw(self, screen, parent_x, parent_y):
         rotations = [150, 90, 30, 150, 90, 30]
@@ -103,8 +101,8 @@ class Road(Building):
 
 
 class Settlement(Building):
-    def __init__(self, owner):
-        super().__init__(owner)
+    def __init__(self, owner, vertex):
+        super().__init__(owner, vertex)
 
     def draw(self, screen, parent_x, parent_y):
         rect = p.Rect(parent_x - HEX_RADIUS / 4.4, parent_y - HEX_RADIUS * 1.1, HEX_RADIUS * .5, HEX_RADIUS * .5)
@@ -122,8 +120,8 @@ class Settlement(Building):
 
 
 class City(Building):
-    def __init__(self, owner):
-        super().__init__(owner)
+    def __init__(self, owner, vertex):
+        super().__init__(owner, vertex)
 
     def draw(self, screen, parent_x, parent_y):
         rect = p.Rect(parent_x - HEX_RADIUS / 2.2, parent_y - HEX_RADIUS * 1.1, HEX_RADIUS * .9, HEX_RADIUS * .5)

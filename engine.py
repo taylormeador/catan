@@ -17,7 +17,7 @@ class Engine:
         # loop through all resource hexes and give resources to building owners
         for hex in ResourceHex.resource_hexes:
             if hex.number == rolled:
-                print('> found hex with rolled number:', hex, hex.vertices)
+                print('> found hex with rolled number:', hex)
                 for vertex in hex.vertices:
                     if vertex:
                         if vertex.occupied:

@@ -3,7 +3,7 @@ p.init()
 
 import globals
 from game_state import GameState
-from buildings import Builder, Road, Settlement, City
+from buildings import Road, Settlement, City
 from player import Player
 from hex import Edge, Vertex
 
@@ -31,17 +31,11 @@ def main():
     # print(hex4, hex4.vertices, hex4.edges)
     # print(hex5, hex5.vertices, hex5.edges)
 
-    city = City(gs.players[0])
-    city1 = City(gs.players[1])
-    settlement = Settlement(gs.players[2])
-    settlement1 = Settlement(gs.players[2])
-    road = Road(gs.players[1], 0) # TODO maybe road doesn't need to know it's position?
-
-    Builder.build(city, hex.vertices[0])
-    Builder.build(city1, hex1.vertices[3])
-    Builder.build(settlement, hex1.vertices[5])
-    Builder.build(settlement1, hex.vertices[0])
-    
+    City(gs.players[0], hex.vertices[0])
+    City(gs.players[1], hex1.vertices[3])
+    Settlement(gs.players[2], hex.vertices[2])
+    Settlement(gs.players[2], hex1.vertices[5])
+    Road(gs.players[1], hex.edges[0])
 
     # game loop
     running = True
@@ -51,9 +45,8 @@ def main():
                 running = False
             
             if e.type == p.MOUSEBUTTONDOWN:
-                en.roll_dice()
-                for player in gs.players:
-                    print(player.resources)
+                pos = p.mouse.get_pos()
+                print(gs.b.get_clicked(pos))
 
 
         gs.b.draw(screen)

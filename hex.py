@@ -27,20 +27,20 @@ class Hex:
         self.type = type
         self.row = row
         self.col = col
-        self.x, self.y = self.get_coordinates(row, col)
+        self.x, self.y = self.get_coordinates()
         Hex.hexes.append(self)
         Hex.instantiated[type] += 1
         self.edges = [None, None, None, None, None, None] # edges are Edge objects, clockwise from edge starting at 1 o clock
         self.vertices = [None, None, None, None, None, None] # vertices are Vertex objects, clockwise from edge starting at 1 o clock
         self.neighbors = [None, None, None, None, None, None] # neighbors are Hex objects, clockwise from edge at 1 o clock
 
-    def get_coordinates(self, row, col):
+    def get_coordinates(self):
         x_offset = globals.WIDTH / 6
         y_offset = globals.HEIGHT / 16
-        x = col * HEX_WIDTH * .88 + ((6 - row) * HEX_RADIUS * .88) + x_offset
-        if row > 2:
-            x = col * HEX_WIDTH * .88 + (row * HEX_RADIUS * .88) + x_offset
-        y = row * HEX_RADIUS * 1.55 + HEX_WIDTH + y_offset
+        x = self.col * HEX_WIDTH * .88 + ((6 - self.row) * HEX_RADIUS * .88) + x_offset
+        if self.row > 2:
+            x = self.col * HEX_WIDTH * .88 + (self.row * HEX_RADIUS * .88) + x_offset
+        y = self.row * HEX_RADIUS * 1.55 + HEX_WIDTH + y_offset
         return x, y
 
     def generate_random_resource_hex(i, j):
@@ -65,18 +65,15 @@ class Hex:
         p.draw.polygon(surface, color, point_list, 0)
         p.draw.polygon(surface, globals.BLACK, point_list, 3)
 
-    # def draw_buildings(self, screen):
-    #     for i in range(6):
-    #         if self.edges[i]:
-    #             self.edges[i].draw(screen, self.x, self.y)
-    #     for i in range(6):
-    #         if self.vertices[i]:
-    #             self.vertices[i].draw(screen, self.x, self.y)
-    #     return
-
     def draw(self, screen):
         self.draw_hexagon(screen, self.color, HEX_RADIUS, self.x, self.y)
         return
+
+    def clicked(self, pos):
+        if abs(self.x - pos[0]) < 30 and abs(self.y - pos[1]) < 30:
+            return True
+        return False
+
 
     def __str__(self):
         return self.type + ' Hex (' + str(self.row) + ', ' + str(self.col) + ')'
@@ -290,6 +287,8 @@ class Edge:
         self.row = row
         self.col = col
         self.position = position
+        self.x, self.y = self.get_coordinates()
+        self.position = position
         Edge.edges.append(self)
 
     def init_all_edges():
@@ -301,16 +300,62 @@ class Edge:
             for j in range(num_of_cols[i]):
                 col = []
                 for position in range(6):
-                    col.append(Edge(i, j, position))
+                    # on the first pass we only add half the edges 
+                    # since we don't want different Edge objects in the same physical space
+                    if position in [0, 4, 5]:
+                        col.append(Edge(i, j, position))
+                    else:
+                        col.append(None)
                 row.append(col)
             structured.append(row)
+
+        # now we loop again and look right, down/left, and down/right for the other edges
+        for i in range(6):
+            upper = i < 3
+            for j in range(num_of_cols[i] - 1):
+                # the first position is the same as the fourth position of the hex on the right
+                structured[i][j][1] = structured[i][j + 1][4]
+
+                # the second position is the same as the fifth position of the hex on the lower right
+                structured[i][j][2] = structured[i + 1][j + 1][5] if upper else structured[i + 1][j][5]
+
+                # the third position is the same as the zero position of the hex on the lower left
+                structured[i][j][3] = structured[i + 1][j][0] if upper else  structured[i + 1][j - 1][0]
         Edge.structured_edges = structured
+
+    def get_coordinates(self):
+        if self.position not in [0, 4, 5]:
+            return 0, 0
+
+        y_coords = [112, 150, 190, 228, 267, 303, 343, 383, 422, 459, 499, 536, 576, 614, 654, 657]
+        x_coords = [324, 346, 367, 387, 411, 432, 455, 475, 498, 520, 542, 562, 586, 610, 630, 650, 675, 697, 718, 740, 763, 784, 807, 827, 850, 874, 894, 917, 939]
+
+        offset = abs(3 - self.row) * 2 + self.col * 4
+        if self.position == 0:
+            x_index = 3 + offset
+            y_index = self.row * 2
+        elif self.position == 4:
+            x_index = offset
+            y_index = self.row * 2 + 1
+        elif self.position == 5:
+            x_index = 1 + offset
+            y_index = self.row * 2
+        else: # should never reach here
+            return 0, 0
+
+        return x_coords[x_index], y_coords[y_index]
+
+    def clicked(self, pos):
+        if abs(self.x - pos[0]) < 7 and abs(self.y - pos[1]) < 7:
+            return True
+        return False
+
+    def draw(self, screen):
+        if self.occupied:
+            self.building.draw(screen, self.row, self.col, self.position)
 
     def __str__(self):
         return 'Edge (' + str(self.row) + ', ' + str(self.col) + ', ' + str(self.position) + ')'
-
-    def __repr__(self):
-        return '<Edge (' + str(self.row) + ', ' + str(self.col) + ', ' + str(self.position) + ')>'
 
 
 class Vertex:
@@ -322,6 +367,7 @@ class Vertex:
         self.occupied = False
         self.row = row
         self.col = col
+        self.x, self.y = self.get_coordinates()
         Vertex.vertices.append(self)
 
     def init_all_vertices():
@@ -335,11 +381,23 @@ class Vertex:
             structured.append(row)
         Vertex.structured_vertices = structured
 
-    def draw(self):
-        pass
+    def get_coordinates(self):
+        y_coords = [178, 203, 256, 281, 334, 359, 410, 436, 488, 513, 565, 591]
+        x_coords = [411, 455, 498, 542, 587, 631, 675, 718, 762, 807, 851]
+
+        x_col_offset = 3 - (self.row + 1) // 2 if self.row < 7 else (self.row + 1) // 2 - 3
+        x_index = x_col_offset + self.col * 2
+
+        return x_coords[x_index], y_coords[self.row]
+
+    def clicked(self, pos):
+        if abs(self.x - pos[0]) < 7 and abs(self.y - pos[1]) < 7:
+            return True
+        return False
+
+    def draw(self, screen):
+        if self.occupied:
+            self.building.draw(screen)
 
     def __str__(self):
         return 'Vertex (' + str(self.row) + ', ' + str(self.col) + ')'
-
-    def __repr__(self):
-        return '<Vertex (' + str(self.row) + ', ' + str(self.col) + ')>'
