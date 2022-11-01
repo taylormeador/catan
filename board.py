@@ -48,10 +48,10 @@ class Board:
         # draw hexes, then roads, then cities/settlements
         for hex in Hex.hexes:
             hex.draw(screen)
-        # for edge in Edge.edges:
-        #     edge.draw(screen)
-        # for vertex in Vertex.vertices:
-        #     vertex.draw(screen)
+        for edge in Edge.edges:
+            edge.draw(screen)
+        for vertex in Vertex.vertices:
+            vertex.draw(screen)
 
     def set_neighbors(self):
         # called when board is initialized

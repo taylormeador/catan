@@ -49,26 +49,12 @@ class Road(Building):
     def __init__(self, owner, edge):
         super().__init__(owner, edge)
 
-    def get_coordinates(self, parent_x, parent_y):
-        pass
-        # x_direction = 1 if self.position < 3 else -1
-        # y_direction = -1 if self.position == 0 or self.position == 5 else 1
-
-        # x = parent_x + x_direction * HEX_RADIUS / 2.2
-        # y = parent_y + y_direction * HEX_RADIUS / 1.3
-
-        # if self.position == 1 or self.position == 4:
-        #     x += x_direction * HEX_RADIUS / 2.3
-        #     y = parent_y
-
-        # return x, y
-
-    def draw(self, screen, parent_x, parent_y):
+    def draw(self, screen):
         rotations = [150, 90, 30, 150, 90, 30]
-        x, y = self.get_coordinates(parent_x, parent_y)
+        x, y = self.location.x, self.location.y
         width = HEX_RADIUS * .7
         height = HEX_RADIUS * .2
-        rotation = rotations[self.position]
+        rotation = rotations[self.location.position]
         points = []
 
         # The distance from the center of the rectangle to one of the corners is the same for each corner
@@ -90,7 +76,7 @@ class Road(Building):
             points.append((x + x_offset, y + y_offset))
 
         p.draw.polygon(screen, self.owner.color, points)
-        p.draw.polygon(screen, globals.BLACK, points, width=3)
+        p.draw.polygon(screen, globals.BLACK, points, width=2)
         return
 
     def __str__(self):
@@ -104,13 +90,15 @@ class Settlement(Building):
     def __init__(self, owner, vertex):
         super().__init__(owner, vertex)
 
-    def draw(self, screen, parent_x, parent_y):
-        rect = p.Rect(parent_x - HEX_RADIUS / 4.4, parent_y - HEX_RADIUS * 1.1, HEX_RADIUS * .5, HEX_RADIUS * .5)
-        triangle_points = self.make_triangle(15, 45, 0, parent_x - HEX_RADIUS * 0.001, parent_y - HEX_RADIUS * 1.25)
+    def draw(self, screen):
+        x, y = self.location.x, self.location.y
+        rect = p.Rect(x - 11, y - 10, HEX_RADIUS * .4, HEX_RADIUS * .4)
+        triangle_points = self.make_triangle(11, 45, 0, x - 1.5, y - 15)
         p.draw.polygon(screen, self.owner.color, triangle_points)
-        p.draw.polygon(screen, globals.BLACK, triangle_points, width=3)
+        p.draw.polygon(screen, globals.BLACK, triangle_points, width=2)
         p.draw.rect(screen, self.owner.color, rect)
-        p.draw.rect(screen, globals.BLACK, rect, width=3)
+        p.draw.rect(screen, globals.BLACK, rect, width=2)
+
 
     def __str__(self):
         return str(self.owner) + '\'s Settlement'
@@ -123,13 +111,14 @@ class City(Building):
     def __init__(self, owner, vertex):
         super().__init__(owner, vertex)
 
-    def draw(self, screen, parent_x, parent_y):
-        rect = p.Rect(parent_x - HEX_RADIUS / 2.2, parent_y - HEX_RADIUS * 1.1, HEX_RADIUS * .9, HEX_RADIUS * .5)
-        triangle_points = self.make_triangle(15, 45, 0, parent_x - HEX_RADIUS * 0.2, parent_y - HEX_RADIUS * 1.25)
+    def draw(self, screen):
+        x, y = self.location.x, self.location.y
+        rect = p.Rect(x - 16, y - 8, HEX_RADIUS * .6, HEX_RADIUS * .4)
+        triangle_points = self.make_triangle(11, 45, 0, x - 6, y - 14)
         p.draw.polygon(screen, self.owner.color, triangle_points)
-        p.draw.polygon(screen, globals.BLACK, triangle_points, width=3)
+        p.draw.polygon(screen, globals.BLACK, triangle_points, width=2)
         p.draw.rect(screen, self.owner.color, rect)
-        p.draw.rect(screen, globals.BLACK, rect, width=3)
+        p.draw.rect(screen, globals.BLACK, rect, width=2)
         return
 
     def __str__(self):

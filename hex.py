@@ -28,11 +28,11 @@ class Hex:
         self.row = row
         self.col = col
         self.x, self.y = self.get_coordinates()
+        self.edges = [None, None, None, None, None, None] # edges are Edge objects, clockwise from edge starting at 1 o clock
+        self.vertices = [None, None, None, None, None, None] # vertices are Vertex objects, clockwise from 12 oclock
+        self.neighbors = [None, None, None, None, None, None] # neighbors are Hex objects, clockwise from edge at 1 o clock
         Hex.hexes.append(self)
         Hex.instantiated[type] += 1
-        self.edges = [None, None, None, None, None, None] # edges are Edge objects, clockwise from edge starting at 1 o clock
-        self.vertices = [None, None, None, None, None, None] # vertices are Vertex objects, clockwise from edge starting at 1 o clock
-        self.neighbors = [None, None, None, None, None, None] # neighbors are Hex objects, clockwise from edge at 1 o clock
 
     def get_coordinates(self):
         x_offset = globals.WIDTH / 6
@@ -327,8 +327,8 @@ class Edge:
         if self.position not in [0, 4, 5]:
             return 0, 0
 
-        y_coords = [112, 150, 190, 228, 267, 303, 343, 383, 422, 459, 499, 536, 576, 614, 654, 657]
-        x_coords = [324, 346, 367, 387, 411, 432, 455, 475, 498, 520, 542, 562, 586, 610, 630, 650, 675, 697, 718, 740, 763, 784, 807, 827, 850, 874, 894, 917, 939]
+        y_coords = [112, 150, 188, 228, 267, 304, 343, 383, 422, 460, 498, 537, 577, 614, 654, 657]
+        x_coords = [324, 346, 367, 387, 409, 432, 453, 475, 498, 520, 541, 562, 585, 610, 629, 650, 673, 697, 717, 740, 761, 784, 805, 827, 850, 874, 894, 917, 939]
 
         offset = abs(3 - self.row) * 2 + self.col * 4
         if self.position == 0:
@@ -352,7 +352,7 @@ class Edge:
 
     def draw(self, screen):
         if self.occupied:
-            self.building.draw(screen, self.row, self.col, self.position)
+            self.building.draw(screen)
 
     def __str__(self):
         return 'Edge (' + str(self.row) + ', ' + str(self.col) + ', ' + str(self.position) + ')'

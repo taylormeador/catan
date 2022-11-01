@@ -24,18 +24,17 @@ def main():
     hex4 = gs.b.get_hex(4, 2)
     hex5 = gs.b.get_hex(0, 0)
 
-    # print(hex, hex.vertices, hex.edges)
-    # print(hex1, hex1.vertices, hex1.edges)
-    # print(hex2, hex2.vertices, hex2.edges)
-    # print(hex3, hex3.vertices, hex3.edges)
-    # print(hex4, hex4.vertices, hex4.edges)
-    # print(hex5, hex5.vertices, hex5.edges)
-
     City(gs.players[0], hex.vertices[0])
     City(gs.players[1], hex1.vertices[3])
     Settlement(gs.players[2], hex.vertices[2])
     Settlement(gs.players[2], hex1.vertices[5])
     Road(gs.players[1], hex.edges[0])
+
+    # for edge in Edge.edges:
+    #     Road(gs.players[1], edge)
+
+    for vertex in Vertex.vertices:
+        City(gs.players[0], vertex)
 
     # game loop
     running = True
