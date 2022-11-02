@@ -6,6 +6,7 @@ from game_state import GameState
 from buildings import Road, Settlement, City
 from player import Player
 from hex import Edge, Vertex
+from game import Game
 
 # main function contains game loop
 def main():
@@ -13,9 +14,11 @@ def main():
     screen = p.display.set_mode((globals.WIDTH, globals.HEIGHT))
     screen.fill(globals.BACKGROUND_COLOR)
     clock = p.time.Clock()
-    
-    gs = GameState([Player('Taylor', p.Color('blue')), Player('Manasi', p.Color('orange')), Player('JB', p.Color('red'))])
-    en = gs.en
+
+    players = [Player('Taylor', p.Color('blue')), Player('Manasi', p.Color('orange')), Player('JB', p.Color('red'))]
+    game = Game(players)
+    gs = game.gs
+    en = game.en
 
     hex = gs.b.get_hex(1, 1)
     hex1 = gs.b.get_hex(3, 2)
@@ -24,17 +27,12 @@ def main():
     hex4 = gs.b.get_hex(4, 2)
     hex5 = gs.b.get_hex(0, 0)
 
-    City(gs.players[0], hex.vertices[0])
-    City(gs.players[1], hex1.vertices[3])
-    Settlement(gs.players[2], hex.vertices[2])
-    Settlement(gs.players[2], hex1.vertices[5])
-    Road(gs.players[1], hex.edges[0])
-
-    # for edge in Edge.edges:
-    #     Road(gs.players[1], edge)
-
-    for vertex in Vertex.vertices:
-        City(gs.players[0], vertex)
+    City(game.players[0], hex.vertices[0])
+    City(game.players[1], hex1.vertices[3])
+    Road(game.players[1], hex1.edges[3])
+    Settlement(game.players[2], hex.vertices[2])
+    Settlement(game.players[2], hex1.vertices[5])
+    Road(game.players[0], hex.edges[0])
 
     # game loop
     running = True
@@ -48,7 +46,7 @@ def main():
                 print(gs.b.get_clicked(pos))
 
 
-        gs.b.draw(screen)
+        game.draw(screen)
         p.display.flip()
         clock.tick(globals.MAX_FPS)
 

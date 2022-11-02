@@ -1,18 +1,23 @@
 from board import Board
-from engine import Engine
-from player import Player
-import random
+from event import EventLog
 
 # handles aspects of game related to state, turns, events, etc
 class GameState:
-    def __init__(self, players):
+    def __init__(self, game):
+        self.game = game
         self.b = Board()
-        self.players = [player for player in players]  # in order of turn taking
+        self.event_log = EventLog()
         self.turns = 0
-        self.turn = self.get_current_player_turn()
-        self.en = Engine(self)
 
-    def get_current_player_turn(self):
-        return self.players[self.turns % len(self.players)]
+    def draw(self, screen):
+        self.b.draw(screen)
+        self.event_log.draw(screen)
+
+    def get_turn(self):
+        return self.game.players[self.turns % len(self.players)]
+
+    # keep track of when player needs to roll, build, etc
+    def get_turn_phase(self):
+        pass
 
 

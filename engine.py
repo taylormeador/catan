@@ -4,13 +4,15 @@ from hex import ResourceHex
 
 # handles rule enforcement and calculation of game processes
 class Engine:
-    def __init__(self, gs):
-        self.gs = gs
+    def __init__(self, game):
+        self.game = game
+        self.event_log = game.gs.event_log
 
     def roll_dice(self):
         first = random.randint(1, 6)
         second = random.randint(1, 6)
-        print('> Rolled:', first + second)
+        event = '> Rolled: ' + str(first + second)
+        self.event_log.push(event)
         self.distribute_resources(first + second)
 
     def distribute_resources(self, rolled):
@@ -32,7 +34,7 @@ class Engine:
         pass
 
     def check_for_win(self):
-        for player in self.gs.players:
+        for player in self.game.players:
             if player.victory_points >= globals.VP_WIN_AMOUNT:
                 return player
         return False

@@ -141,7 +141,7 @@ class ResourceHex(Hex):
                 p.draw.circle(screen, globals.BLACK, (self.x + direction * 5 * offset, self.y + chit_radius / 2), 2)
 
     def __str__(self):
-        return self.resource + ' ' + str(self.number) + ' Resource Hex'
+        return 'Resource Hex (' + str(self.row) + ', ' + str(self.col) + ') ' + self.resource + ' ' + str(self.number)
 
     def __repr__(self):
         return '<Resource Hex ' + self.type + ' ' + str(self.number) + '>'
@@ -152,6 +152,10 @@ class DesertHex(Hex):
 
     def __init__(self, row, col):
         super().__init__('desert', row, col)
+
+    def __str__(self):
+        return 'Desert Hex (' + str(self.row) + ', ' + str(self.col) + ')'
+
 
 
 class HarborHex(Hex):
@@ -247,6 +251,7 @@ class HarborHex(Hex):
             points.append((x + x_offset, y + y_offset))
 
         p.draw.polygon(screen, DESERT_COLOR, points)
+        p.draw.polygon(screen, globals.BLACK, points, width=2)
         return
 
     def draw(self, screen):
@@ -259,7 +264,7 @@ class HarborHex(Hex):
         screen.blit(text_surface, self.get_resource_text_coordinates())
         
     def __str__(self):
-        return self.trade_resource + ' Harbor Hex'
+        return 'Harbor Hex (' + str(self.row) + ', ' + str(self.col) + ') ' + self.trade_resource
 
     def __repr__(self):
         return '<Harbor Hex ' + self.trade_resource + '>'
@@ -271,7 +276,7 @@ class WaterHex(Hex):
         super().__init__('water', row, col)
 
     def __str__(self):
-        return 'Water Hex'
+        return 'Water Hex (' + str(self.row) + ', ' + str(self.col) + ')'
 
     def __repr__(self):
         return '<Water Hex>'

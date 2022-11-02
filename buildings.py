@@ -43,11 +43,19 @@ class Building:
     def build(self):
         self.location.building = self
         self.location.occupied = True
+        if isinstance(self, Road):
+            self.owner.roads.append(self)
+            # TODO update longest road here?
+        elif isinstance(self, Settlement):
+            self.owner.settlements.append(self)
+        elif isinstance(self, City):
+            self.owner.cities.append(self)
 
 
 class Road(Building):
     def __init__(self, owner, edge):
         super().__init__(owner, edge)
+        self.cost = {'wood': 1, 'brick': 1}
 
     def draw(self, screen):
         rotations = [150, 90, 30, 150, 90, 30]
@@ -89,6 +97,7 @@ class Road(Building):
 class Settlement(Building):
     def __init__(self, owner, vertex):
         super().__init__(owner, vertex)
+        self.cost = {'wood': 1, 'brick': 1, 'sheep': 1, 'wheat': 1}
 
     def draw(self, screen):
         x, y = self.location.x, self.location.y
@@ -110,11 +119,12 @@ class Settlement(Building):
 class City(Building):
     def __init__(self, owner, vertex):
         super().__init__(owner, vertex)
+        self.cost = {'ore': 3, 'wheat': 2}
 
     def draw(self, screen):
         x, y = self.location.x, self.location.y
         rect = p.Rect(x - 16, y - 8, HEX_RADIUS * .6, HEX_RADIUS * .4)
-        triangle_points = self.make_triangle(11, 45, 0, x - 6, y - 14)
+        triangle_points = self.make_triangle(11, 45, 0, x - 6, y - 13)
         p.draw.polygon(screen, self.owner.color, triangle_points)
         p.draw.polygon(screen, globals.BLACK, triangle_points, width=2)
         p.draw.rect(screen, self.owner.color, rect)
