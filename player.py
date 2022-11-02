@@ -19,8 +19,20 @@ class Player:
         screen.blit(text_surface, (self.x + 5, self.y + 5 + self.i * 15))
         self.i += 1
 
+    def draw_prompt(self, screen):
+        # background
+        x = globals.WIDTH * .9
+        y = globals.HEIGHT * .9
+        background = p.Rect(x, y, 75, 40)
+        p.draw.rect(screen, globals.ISLAND_COLOR, background)
+        # if it's the dice roll phase
+        text_surface = self.font.render('Roll Dice', True, globals.BLACK)
+        # if it's the end of turn phase
+        text_surface = self.font.render('End Turn', True, globals.BLACK)
+        screen.blit(text_surface, (x + 7, y + 12))
+
     # draw stash
-    def draw(self, screen):
+    def draw_stash(self, screen):
         # background
         self.x = globals.WIDTH * .02
         self.y = globals.HEIGHT * .54
@@ -51,6 +63,10 @@ class Player:
         self.draw_line(screen, 'army: ' + str(self.dev_cards['knight']))
         self.draw_line(screen, 'victory points: ' + str(self.victory_points))
         
+    def draw(self, screen):
+        self.draw_stash(screen)
+        self.draw_prompt(screen) # TODO only want to call this if it's this players turn
+
     def __str__(self):
         return self.name
 

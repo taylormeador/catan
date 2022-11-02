@@ -16,6 +16,10 @@ class GameState:
     def get_turn(self):
         return self.game.players[self.turns % len(self.players)]
 
+    def change_turns(self):
+        self.turns += 1
+        self.event_log.push(self.get_turn().name + '\'s turn. Roll the dice!')
+
     # keep track of when player needs to roll, build, etc
     def get_turn_phase(self):
         pass

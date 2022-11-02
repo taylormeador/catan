@@ -8,7 +8,8 @@ class Game:
         self.gs = GameState(self)
         self.en = Engine(self)
         self.players = players
+        self.me = 0  # TODO
 
     def draw(self, screen):
         self.gs.draw(screen)
-        self.players[0].draw(screen)
+        self.players[self.me].draw(screen)

@@ -1,4 +1,6 @@
 from hex import Hex, Vertex, Edge
+import pygame as p
+import globals
 
 class Board:
     def __init__(self):
