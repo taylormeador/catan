@@ -7,12 +7,13 @@ from buildings import Road, Settlement, City
 from player import Player
 from hex import Edge, Vertex
 from game import Game
+import mouse as m
 
 # main function contains game loop
 def main():
     p.display.set_caption('Conquerors of Catalan')
     screen = p.display.set_mode((globals.WIDTH, globals.HEIGHT))
-    screen.fill(globals.BACKGROUND_COLOR)
+
     clock = p.time.Clock()
 
     players = [Player('Taylor', p.Color('blue')), Player('Manasi', p.Color('orange')), Player('JB', p.Color('red'))]
@@ -43,9 +44,9 @@ def main():
             
             if e.type == p.MOUSEBUTTONDOWN:
                 pos = p.mouse.get_pos()
-                print(gs.b.get_clicked(pos))
+                print(m.get_clicked(pos))
 
-
+        screen.fill(globals.BACKGROUND_COLOR)
         game.draw(screen)
         p.display.flip()
         clock.tick(globals.MAX_FPS)

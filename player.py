@@ -2,6 +2,8 @@ import globals
 import pygame as p
 
 class Player:
+    current_player = None
+
     def __init__(self, name, color):
         self.name = name
         self.color = color
@@ -12,6 +14,7 @@ class Player:
         self.roads = []
         self.longest_road = 0
         self.victory_points = 0
+        self.game = None
 
     # helper for drawing stash
     def draw_line(self, screen, text):
@@ -25,13 +28,26 @@ class Player:
         y = globals.HEIGHT * .9
         background = p.Rect(x, y, 75, 40)
         p.draw.rect(screen, globals.ISLAND_COLOR, background)
-        # if it's the dice roll phase
-        text_surface = self.font.render('Roll Dice', True, globals.BLACK)
-        # if it's the end of turn phase
-        text_surface = self.font.render('End Turn', True, globals.BLACK)
+        
+        if self.game.gs.get_turn_phase() == 'roll':
+            text_surface = self.font.render('Roll Dice', True, globals.BLACK)
+        else:
+            text_surface = self.font.render('End Turn', True, globals.BLACK)
         screen.blit(text_surface, (x + 7, y + 12))
 
-    # draw stash
+    def prompt_clicked(self, pos):
+        prompt_x = globals.WIDTH * .9 + 75 / 2
+        prompt_y = globals.HEIGHT * .9 + 40 / 2
+        if abs(prompt_x - pos[0]) < 75 / 2 and abs(prompt_y - pos[1]) < 40 / 2:
+            return True
+        return False
+
+    def prompt_action(self):
+        if self.game.gs.get_turn_phase() == 'roll':
+            self.game.en.roll_dice()
+        else:
+            self.game.gs.change_turns()
+
     def draw_stash(self, screen):
         # background
         self.x = globals.WIDTH * .02
@@ -66,6 +82,17 @@ class Player:
     def draw(self, screen):
         self.draw_stash(screen)
         self.draw_prompt(screen) # TODO only want to call this if it's this players turn
+
+    def robber(self):
+        pass
+
+    def set_victory_points(self):
+        sum = 0
+        # TODO longest_road, largest army
+        sum += self.dev_cards['victory point']
+        sum += len(self.cities) * 2
+        sum += len(self.settlements)
+        self.victory_points = sum
 
     def __str__(self):
         return self.name

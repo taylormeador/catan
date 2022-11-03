@@ -132,18 +132,6 @@ class Board:
         Edge.init_all_edges()
         for hex in Hex.hexes:
             hex.edges = Edge.structured_edges[hex.row][hex.col]
-    
-    def get_clicked(self, pos):
-        for v in Vertex.vertices:
-            if v.clicked(pos):
-                return v
-        for e in Edge.edges:
-            if e.clicked(pos):
-                return e
-        for h in Hex.hexes:
-            if h.clicked(pos):
-                return h
-        return None
 
     def __str__(self):
         string = "\n"

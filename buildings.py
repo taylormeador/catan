@@ -51,6 +51,8 @@ class Building:
         elif isinstance(self, City):
             self.owner.cities.append(self)
 
+        self.owner.game.en.check_for_win()
+
 
 class Road(Building):
     def __init__(self, owner, edge):

@@ -13,7 +13,7 @@ class EventLog:
 
     def push(self, event):
         assert isinstance(event, str)
-        print(event)
+        print('> ' + event)
         self.events.insert(0, event)
         if len(self.events) > 26:
             self.events = self.events[:26]
